@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Device Properties Example</title>
+    <style>
+      html, body, #map-canvas {
+        margin: 0;
+        padding: 0;
+        height: 200px;
+        width: 100%;
+      }
+    </style>
+
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+    <script type="text/javascript" charset="utf-8">
+
+
+    // Wait for device API libraries to load
+    //
+    document.addEventListener("deviceready", onDeviceReady, false);
+
+    var watchID = null;
+
+    // device APIs are available
+    //
+    function onDeviceReady() {
+        // Throw an error if no update is received every 30 seconds
+        var options = { timeout: 30000 };
+        watchID = navigator.geolocation.watchPosition(onSuccess, onError, options);
+    }
+
+    // onSuccess Geolocation
+    //
+    function onSuccess(position) {
+        var lat = document.getElementById('lat');
+        var lng = document.getElementById('lng');
+        var alt = document.getElementById('alt');
+        var speed = document.getElementById('speed');
+        var time = document.getElementById('time');
+
+        lat.innerHTML = "Latitude: "+ position.coords.latitude;
+        lng.innerHTML = "Longitude: "+ position.coords.longitude;
+        alt.innerHTML = "Altitude: "+ position.coords.altitude;
+        speed.innerHTML = "Speed: "+ position.coords.speed;
+        time.innerHTML = "Time: "+ position.timestamp;
+        var here = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+        map.setCenter(here);
+        marker.setPosition(here);
+    }
+
+        // onError Callback receives a PositionError object
+        //
+        function onError(error) {
+            alert('code: '    + error.code    + '\n' +
+                  'message: ' + error.message + '\n');
+        }
+    var map;
+    var marker;
+function initialize() {
+  var mapOptions = {
+    zoom: 11,
+    center: new google.maps.LatLng(-34.397, 150.644),
+    mapTypeId: google.maps.MapTypeId.TERRAIN
+  };
+  map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+  marker = new google.maps.Marker({
+    map:map,
+    draggable:true,
+    animation: google.maps.Animation.DROP,
+    position: new google.maps.LatLng(-34.397, 150.644)
+  });
+}
+
+google.maps.event.addDomListener(window, 'load', initialize);
+
+    </script>
+  </head>
+  <body>
+    <div id="lat"></div>
+    <div id="lng"></div>
+    <div id="alt"></div>
+    <div id="speed"></div>
+    <div id="time"></div>
+    <div id="map-canvas"/>
+  </body>
+</html>
